@@ -1,4 +1,4 @@
 steps:
 - name: 'gcr.io/cloud-builders/gsutil'
   args:
-  - 'cp -r dist/ gs://my-bucket'
+  - 'cp -r dist/ gs://bcat-realtime-hotmapfrontend'
