@@ -15,6 +15,6 @@
    - '--image'
    - 'gcr.io/$PROJECT_ID/$SERVICE-NAME:$COMMIT_SHA'
    - '--region'
-   - 'REGION'
+   - '$REGION'
  images:
  - 'gcr.io/$PROJECT_ID/$SERVICE-NAME:$COMMIT_SHA'
