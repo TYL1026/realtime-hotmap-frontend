@@ -1,8 +1,31 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppThunk } from "../../app/store";
 
+export interface Geometry {
+  type: string;
+  coordinates: number[];
+}
+
+export interface Feature {
+  type: 'Feature';
+  geometry: Geometry;
+  properties: { [key: string]: any };
+}
+
+export interface GeoJsonType {
+  type: 'FeatureCollection';
+  crs: {
+    type: "name",
+    properties: {
+      name: "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  }
+  features: Feature[];
+}
+
+
 export interface dataState {
-  GeoJson: JSON | null;
+  GeoJson: GeoJsonType | null;
   status: "idle" | "loading" | "failed" | "succeeded";
   error: string | null;
 }
@@ -17,7 +40,7 @@ export const dataSlice = createSlice({
   name: "data",
   initialState,
   reducers: {
-    setGeoJson: (state, action: PayloadAction<JSON>) => {
+    setGeoJson: (state, action: PayloadAction<GeoJsonType>) => {
       state.GeoJson = JSON.parse(JSON.stringify(action.payload));
     },
   },
