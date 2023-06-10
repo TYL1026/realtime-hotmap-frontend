@@ -1,9 +1,9 @@
 import { Box, Container } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MapGL, { Layer, Map, Source } from "react-map-gl";
-import { heatmapLayer } from "../map-style";
-import * as dataJson from "../data/data.json";
-import { GeoJsonData } from "../utils/GeoJsonData";
+import { circleLayer, heatmapLayer } from "../map-style";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { fetchData } from "../features/data/dataSlice";
 
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiYmVuamE5OCIsImEiOiJjbGlpYzZuOHUxdHV6M2dwN2M5bXNsZTFrIn0.9aQuvhbH6EifAfRcMX-dug";
@@ -11,10 +11,16 @@ const MAPBOX_TOKEN =
 
 
 
-const data:any =  dataJson
   
 
 const UberMap = () => {
+
+  const dispatch = useAppDispatch();
+  const data:any = useAppSelector((state) => state.data.GeoJson);
+
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
 
   return (
     <Box mx={0} my={0}>
@@ -31,6 +37,7 @@ const UberMap = () => {
         {data && (
             <Source type="geojson" data={data}>
                 <Layer {...heatmapLayer} />
+                <Layer {...circleLayer} />
             </Source>
             )}
       </MapGL>

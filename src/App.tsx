@@ -1,18 +1,15 @@
 import React from 'react';
-import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
+import logo from './logo.svg';
+import { Counter } from './features/counter/Counter';
 import SideBar from './routers/SideBar';
 import UberMap from './routers/UberMap';
-
+import './App.css';
 
 function App() {
   return (
-    <BrowserRouter>
-      <SideBar>
-      <Routes>
-          <Route path="/" element={<UberMap />} />
-        </Routes>
-      </SideBar>
-    </BrowserRouter>
+    <SideBar>
+    <UberMap />
+  </SideBar>
   );
 }
 
