@@ -1,40 +1,75 @@
-import type {HeatmapLayer} from 'react-map-gl';
+import exp from 'constants';
+import type {CircleLayer, HeatmapLayer} from 'react-map-gl';
 
-const MAX_ZOOM_LEVEL = 14;
+const MAX_ZOOM_LEVEL = 15;
 
 export const heatmapLayer: HeatmapLayer = {
   id: 'heatmap',
   maxzoom: MAX_ZOOM_LEVEL,
   type: 'heatmap',
   paint: {
-    // Increase the heatmap weight based on frequency and property magnitude
-    'heatmap-weight': ['interpolate', ['linear'], ['get', 'density'], 0, 0, 1, 1],
-    // Increase the heatmap color weight weight by zoom level
-    // heatmap-intensity is a multiplier on top of heatmap-weight
-    'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, MAX_ZOOM_LEVEL, 5],
-    // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
-    // Begin color ramp at 0-stop with a 0-transparancy color
-    // to create a blur-like effect.
+
+    'heatmap-weight': ['interpolate', ["exponential", 2], ['get', 'density'], 0, 0, 1, 1],
+
+    'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 11, 1, MAX_ZOOM_LEVEL, 3],
+
     'heatmap-color': [
       'interpolate',
       ['linear'],
       ['heatmap-density'],
       0,
-      'rgba(33,102,172,0)',
+      'rgba(236,222,239,0)',
       0.2,
-      'rgb(103,169,207)',
+      'rgb(208,209,230)',
       0.4,
-      'rgb(209,229,240)',
+      'rgb(166,189,219)',
       0.6,
-      'rgb(253,219,199)',
+      'rgb(103,169,207)',
       0.8,
-      'rgb(239,138,98)',
-      0.9,
-      'rgb(255,201,101)'
+      'rgb(28,144,153)'
     ],
-    // Adjust the heatmap radius by zoom level
-    'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, MAX_ZOOM_LEVEL, 10],
-    // Transition from heatmap to circle layer by zoom level
-    'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 12, 1, 14, 0]
+
+    'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 11, 15, MAX_ZOOM_LEVEL, 20],
+
+    'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 14, 1, 15, 0]
+  }
+};
+
+export const circleLayer: CircleLayer = {
+  id: 'circle',
+  minzoom: MAX_ZOOM_LEVEL-1,
+  type: 'circle',
+  paint: {
+    'circle-radius': {
+      property: 'density',
+      type: 'exponential',
+      stops: [
+        [{ zoom: 15, value: 0 }, 5],
+        [{ zoom: 15, value: 1 }, 10],
+        [{ zoom: 22, value: 0 }, 20],
+        [{ zoom: 22, value: 1 }, 50]
+      ]
+    },
+    'circle-color': {
+      property: 'density',
+      type: 'exponential',
+      stops: [
+        [0, 'rgba(236,222,239,0)'],
+        [10, 'rgb(236,222,239)'],
+        [20, 'rgb(208,209,230)'],
+        [30, 'rgb(166,189,219)'],
+        [40, 'rgb(103,169,207)'],
+        [50, 'rgb(28,144,153)'],
+        [60, 'rgb(1,108,89)']
+      ]
+    },
+    'circle-stroke-color': 'white',
+    'circle-stroke-width': 1,
+    'circle-opacity': {
+      stops: [
+        [14, 0],
+        [15, 1]
+      ]
+    }
   }
 };
