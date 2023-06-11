@@ -4,7 +4,7 @@ import MapGL, { Layer, Map, Source } from "react-map-gl";
 import { circleLayer, heatmapLayer } from "../map-style";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { fetchData } from "../features/data/dataSlice";
-
+import { Point } from "../features/data/Convert";
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiYmVuamE5OCIsImEiOiJjbGlpYzZuOHUxdHV6M2dwN2M5bXNsZTFrIn0.9aQuvhbH6EifAfRcMX-dug";
 
@@ -17,6 +17,7 @@ const UberMap = () => {
     dispatch(fetchData());
   }, [dispatch]);
 
+
   useEffect(() => {
     const data = {
       type: "FeatureCollection",
@@ -26,7 +27,7 @@ const UberMap = () => {
           name: "urn:ogc:def:crs:OGC:1.3:CRS84",
         },
       },
-      features: points? points.map((point, index) => ({
+      features: points ? points.map((point, index) => ({
         type: "Feature",
         properties: {
           type: point.type,
@@ -34,16 +35,16 @@ const UberMap = () => {
           time: point.time,
           density: point.density,
           lat: point.lat,
-          lng: point.lng,
+          lng: point.long,
         },
         geometry: {
           type: "Point",
-          coordinates: [point.lng, point.lat],
+          coordinates: [point.long, point.lat],
         },
       })) : [],
     };
     setData(data);
-  }, []);
+  }, [points]);
 
   return (
     <Box mx={0} my={0}>
