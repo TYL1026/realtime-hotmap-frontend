@@ -1,24 +1,18 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppThunk } from "../../app/store";
-
-export type Point = {
-  id: number;
-  type: string;
-  lat: number;
-  lng: number;
-  time: number;
-  density: number;
-}
+import { act } from "react-dom/test-utils";
+import { Point } from "./Convert";
+import { Convert } from "./Convert";
 
 
 export interface dataState {
-  points: Point[] | null;
+  points: Point[];
   status: "idle" | "loading" | "failed" | "succeeded";
   error: string | null;
 }
 
 const initialState: dataState = {
-  points: null,
+  points: [],
   status: "idle",
   error: null,
 };
@@ -60,8 +54,9 @@ export const fetchData = createAsyncThunk(
     };
 
     ws.onmessage = (e) => {
-      dispatch(setPoints(e.data));
-      console.log(e.data);
+      const parsedData: Point[] = Convert.toPoint(JSON.parse(e.data));
+      // console.log(parsedData);
+      dispatch(setPoints(parsedData));
     };
 
     ws.onerror = (e) => {
