@@ -1,37 +1,24 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppThunk } from "../../app/store";
 
-export interface Geometry {
+export type Point = {
+  id: number;
   type: string;
-  coordinates: number[];
-}
-
-export interface Feature {
-  type: 'Feature';
-  geometry: Geometry;
-  properties: { [key: string]: any };
-}
-
-export interface GeoJsonType {
-  type: 'FeatureCollection';
-  crs: {
-    type: "name",
-    properties: {
-      name: "urn:ogc:def:crs:OGC:1.3:CRS84"
-    }
-  }
-  features: Feature[];
+  lat: number;
+  lng: number;
+  time: number;
+  density: number;
 }
 
 
 export interface dataState {
-  GeoJson: GeoJsonType | null;
+  points: Point[] | null;
   status: "idle" | "loading" | "failed" | "succeeded";
   error: string | null;
 }
 
 const initialState: dataState = {
-  GeoJson: null,
+  points: null,
   status: "idle",
   error: null,
 };
@@ -40,8 +27,8 @@ export const dataSlice = createSlice({
   name: "data",
   initialState,
   reducers: {
-    setGeoJson: (state, action: PayloadAction<GeoJsonType>) => {
-      state.GeoJson = JSON.parse(JSON.stringify(action.payload));
+    setPoints: (state, action: PayloadAction<Point[]>) => {
+      state.points = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -59,7 +46,7 @@ export const dataSlice = createSlice({
   },
 });
 
-export const { setGeoJson } = dataSlice.actions;
+export const { setPoints } = dataSlice.actions;
 
 export const fetchData = createAsyncThunk(
   "data/fetchData",
@@ -73,8 +60,7 @@ export const fetchData = createAsyncThunk(
     };
 
     ws.onmessage = (e) => {
-      const currData = JSON.parse(e.data);
-      dispatch(setGeoJson(currData));
+      dispatch(setPoints(e.data));
       console.log(e.data);
     };
 

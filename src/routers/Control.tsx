@@ -114,7 +114,7 @@ const StyledTabsList = styled(TabsList)(
 
 const Control = () => {
   const dispatch = useAppDispatch();
-  const data = useAppSelector((state) => state.data.GeoJson);
+  const points = useAppSelector((state) => state.data.points);
 
   React.useEffect(() => {
     dispatch(fetchData());

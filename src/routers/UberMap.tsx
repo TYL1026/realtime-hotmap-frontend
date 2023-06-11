@@ -8,19 +8,42 @@ import { fetchData } from "../features/data/dataSlice";
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiYmVuamE5OCIsImEiOiJjbGlpYzZuOHUxdHV6M2dwN2M5bXNsZTFrIn0.9aQuvhbH6EifAfRcMX-dug";
 
-
-
-
-  
-
 const UberMap = () => {
-
+  const [data, setData] = useState<any>();
   const dispatch = useAppDispatch();
-  const data:any = useAppSelector((state) => state.data.GeoJson);
+  const points = useAppSelector((state) => state.data.points);
 
   useEffect(() => {
     dispatch(fetchData());
   }, [dispatch]);
+
+  useEffect(() => {
+    const data = {
+      type: "FeatureCollection",
+      crs: {
+        type: "name",
+        properties: {
+          name: "urn:ogc:def:crs:OGC:1.3:CRS84",
+        },
+      },
+      features: points? points.map((point, index) => ({
+        type: "Feature",
+        properties: {
+          type: point.type,
+          id: point.id,
+          time: point.time,
+          density: point.density,
+          lat: point.lat,
+          lng: point.lng,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [point.lng, point.lat],
+        },
+      })) : [],
+    };
+    setData(data);
+  }, []);
 
   return (
     <Box mx={0} my={0}>
@@ -35,11 +58,11 @@ const UberMap = () => {
         mapboxAccessToken={MAPBOX_TOKEN}
       >
         {data && (
-            <Source type="geojson" data={data}>
-                <Layer {...heatmapLayer} />
-                <Layer {...circleLayer} />
-            </Source>
-            )}
+          <Source type="geojson" data={data}>
+            <Layer {...heatmapLayer} />
+            <Layer {...circleLayer} />
+          </Source>
+        )}
       </MapGL>
     </Box>
   );
